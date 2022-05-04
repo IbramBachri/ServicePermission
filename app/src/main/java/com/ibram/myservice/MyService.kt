@@ -4,9 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import java.lang.UnsupportedOperationException
 
 class MyService : Service() {
@@ -24,7 +22,18 @@ class MyService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d(TAG, "Service Dijalankan...");
+        Log.d(TAG, "Service Dijalankan...")
+        serviceScope.launch {
+            delay(3000)
+            stopSelf()
+            Log.d(TAG, "Service dihentikan")
+        }
         return START_STICKY
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        serviceJob.cancel()
+        Log.d(TAG, "onDestroy:")
     }
 }
